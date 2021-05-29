@@ -77,7 +77,7 @@
     if ([[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/DejaVu.disabled"]) {
         [[self enableSwitch] setEnabled:NO];
 
-        UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"DejaVu" message:@"DejaVu has detected that you have disabled it with iCleaner Pro, here are some quick actions you can perform" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Déjà Vu" message:@"Déjà Vu has detected that you have disabled it with iCleaner Pro, here are some quick actions you can perform" preferredStyle:UIAlertControllerStyleAlert];
         
         UIAlertAction* resetAction = [UIAlertAction actionWithTitle:@"Reset preferences" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
             [self resetPreferences];
@@ -97,7 +97,7 @@
 
         [self presentViewController:alertController animated:YES completion:nil];
     } else if ([[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/DayNightSwitch.dylib"]) {
-        UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"DejaVu" message:@"DejaVu has detected that you have DayNightSwitch installed, which causes issues with DejaVu's preferences\n\n To continue, please disable DayNightSwitch with iCleaner Pro or uninstall it temporarily" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Déjà Vu" message:@"Déjà Vu has detected that you have DayNightSwitch installed, which causes issues with Déjà Vu's preferences\n\n To continue, please disable DayNightSwitch with iCleaner Pro or uninstall it temporarily" preferredStyle:UIAlertControllerStyleAlert];
 
         UIAlertAction* confirmAction = [UIAlertAction actionWithTitle:@"Okey" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
             [[self navigationController] popViewControllerAnimated:YES];
@@ -200,7 +200,7 @@
 
 - (void)resetPrompt {
 
-    UIAlertController* resetAlert = [UIAlertController alertControllerWithTitle:@"DejaVu" message:@"Do you really want to reset your preferences?" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertController* resetAlert = [UIAlertController alertControllerWithTitle:@"Déjà Vu" message:@"Do you really want to reset your preferences?" preferredStyle:UIAlertControllerStyleActionSheet];
 	
     UIAlertAction* confirmAction = [UIAlertAction actionWithTitle:@"Yaw" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
         [self resetPreferences];
