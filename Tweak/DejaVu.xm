@@ -76,7 +76,10 @@
 			[[%c(SBUIBiometricResource) sharedInstance] noteScreenDidTurnOff];
 		}
 
-		if (enableLowPowerModeSwitch) [[%c(_CDBatterySaver) sharedInstance] setPowerMode:1 error:nil];
+		if (enableLowPowerModeSwitch) {
+			previousLowPowerModeState = [[%c(_CDBatterySaver) sharedInstance] getPowerMode];
+			[[%c(_CDBatterySaver) sharedInstance] setPowerMode:1 error:nil];
+		}
 
 		if (enableDoNotDisturbSwitch) {
 			DNDModeAssertionService* assertionService = (DNDModeAssertionService *)[objc_getClass("DNDModeAssertionService") serviceForClientIdentifier:@"com.apple.donotdisturb.control-center.module"];
@@ -85,7 +88,7 @@
 			[notificationCenter postNotificationName:@"SBQuietModeStatusChangedNotification" object:nil];
 		}
 
-		[[springboard proximitySensorManager] _enableProx];
+		if (pocketDetectionSwitch) [[springboard proximitySensorManager] _enableProx];
 
 		[notificationCenter postNotificationName:@"dejavuUpdateIdleTimer" object:nil];
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.02 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
@@ -117,7 +120,7 @@
 		[[%c(SBUIBiometricResource) sharedInstance] noteScreenWillTurnOn];
 	}
 
-	if (enableLowPowerModeSwitch) [[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil];
+	if (enableLowPowerModeSwitch && previousLowPowerModeState == 0) [[%c(_CDBatterySaver) sharedInstance] setPowerMode:0 error:nil];
 
 	if (enableDoNotDisturbSwitch) {
 		DNDModeAssertionService* assertionService = (DNDModeAssertionService *)[objc_getClass("DNDModeAssertionService") serviceForClientIdentifier:@"com.apple.donotdisturb.control-center.module"];

@@ -8,6 +8,7 @@ HBPreferences* preferences = nil;
 BOOL enabled = NO;
 
 BOOL isDejaVuActive = NO;
+int previousLowPowerModeState = 0;
 
 UIView* dejavuView = nil;
 UIImpactFeedbackGenerator* generator = nil;
@@ -70,6 +71,7 @@ BOOL hideUnlockTextAndHomebarSwitch = YES;
 
 @interface _CDBatterySaver : NSObject
 + (id)sharedInstance;
+- (long long)getPowerMode;
 - (BOOL)setPowerMode:(long long)arg1 error:(id *)arg2;
 @end
 
