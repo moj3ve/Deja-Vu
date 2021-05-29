@@ -13,7 +13,7 @@
 	dejavuView = [[UIView alloc] initWithFrame:[[self view] bounds]];
 	[dejavuView setAutoresizingMask:UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight];
 	[dejavuView setBackgroundColor:[UIColor blackColor]];
-	[dejavuView setAlpha:1.0];
+	[dejavuView setAlpha:1];
 	[dejavuView setHidden:YES];
 	[[self view] insertSubview:dejavuView atIndex:0];
 
@@ -35,9 +35,10 @@
 
 - (id)init { // register notification observers
 
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(activateDejaVu) name:@"dejavuActivate" object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deactivateDejaVu) name:@"dejavuDeactivate" object:nil];
+	NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+	[notificationCenter removeObserver:self];
+	[notificationCenter addObserver:self selector:@selector(activateDejaVu) name:@"dejavuActivate" object:nil];
+	[notificationCenter addObserver:self selector:@selector(deactivateDejaVu) name:@"dejavuDeactivate" object:nil];
 
 	return %orig;
 
@@ -63,11 +64,12 @@
 %new
 - (void)activateDejaVu { // enable deja vu
 
-	[dejavuView setAlpha:1.0];
+	[dejavuView setAlpha:1];
 	[dejavuView setHidden:NO];
 	dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
 		SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
 		[springboard _simulateHomeButtonPress];
+		NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
 		
 		if (disableBiometricsSwitch) {
 			[[%c(SBLockScreenManager) sharedInstance] setBiometricAutoUnlockingDisabled:YES forReason:@"love.litten.dejavu"];
@@ -80,14 +82,14 @@
 			DNDModeAssertionService* assertionService = (DNDModeAssertionService *)[objc_getClass("DNDModeAssertionService") serviceForClientIdentifier:@"com.apple.donotdisturb.control-center.module"];
 			DNDModeAssertionDetails* newAssertion = [objc_getClass("DNDModeAssertionDetails") userRequestedAssertionDetailsWithIdentifier:@"com.apple.control-center.manual-toggle" modeIdentifier:@"com.apple.donotdisturb.mode.default" lifetime:nil];
 			[assertionService takeModeAssertionWithDetails:newAssertion error:NULL];
-			[[NSNotificationCenter defaultCenter] postNotificationName:@"SBQuietModeStatusChangedNotification" object:nil];
+			[notificationCenter postNotificationName:@"SBQuietModeStatusChangedNotification" object:nil];
 		}
 
 		[[springboard proximitySensorManager] _enableProx];
 
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"dejavuUpdateIdleTimer" object:nil];
+		[notificationCenter postNotificationName:@"dejavuUpdateIdleTimer" object:nil];
 		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.02 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-			[[NSNotificationCenter defaultCenter] postNotificationName:@"dejavuHideElements" object:nil];
+			[notificationCenter postNotificationName:@"dejavuHideElements" object:nil];
 		});
 	});
 
@@ -102,11 +104,13 @@
 
 	isDejaVuActive = NO;
 
-	[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-		[dejavuView setAlpha:0.0];
+	[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+		[dejavuView setAlpha:0];
 	} completion:^(BOOL finished) {
 		[dejavuView setHidden:YES];
 	}];
+
+	NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
 
 	if (disableBiometricsSwitch) {
 		[[%c(SBLockScreenManager) sharedInstance] setBiometricAutoUnlockingDisabled:NO forReason:@"love.litten.dejavu"];
@@ -118,14 +122,14 @@
 	if (enableDoNotDisturbSwitch) {
 		DNDModeAssertionService* assertionService = (DNDModeAssertionService *)[objc_getClass("DNDModeAssertionService") serviceForClientIdentifier:@"com.apple.donotdisturb.control-center.module"];
 		[assertionService invalidateAllActiveModeAssertionsWithError:NULL];
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"SBQuietModeStatusChangedNotification" object:nil];
+		[notificationCenter postNotificationName:@"SBQuietModeStatusChangedNotification" object:nil];
 	}
 
 	SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
 	[[springboard proximitySensorManager] _disableProx];
 	
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"dejavuUpdateIdleTimer" object:nil];
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"dejavuUnhideElements" object:nil];
+	[notificationCenter postNotificationName:@"dejavuUpdateIdleTimer" object:nil];
+	[notificationCenter postNotificationName:@"dejavuUnhideElements" object:nil];
 
 	if (enableHapticFeedbackSwitch) {
 		if (!generator) {
@@ -149,7 +153,7 @@
 	if (pixelShiftSwitch) {
 		[pixelShiftTimer invalidate];
 		pixelShiftTimer = nil;
-		[[NSNotificationCenter defaultCenter] postNotificationName:@"dejavuResetShift" object:nil];
+		[notificationCenter postNotificationName:@"dejavuResetShift" object:nil];
 	}
 	
 	if (dimDisplaySwitch) {
@@ -181,6 +185,7 @@
 %new
 - (void)dimDisplay { // dim the display
 
+	// disable auto brightness
 	CFPreferencesSetAppValue(CFSTR("BKEnableALS"), kCFBooleanFalse, CFSTR("com.apple.backboardd"));
 	CFPreferencesAppSynchronize(CFSTR("com.apple.backboardd"));
 	GSSendAppPreferencesChanged(CFSTR("com.apple.backboardd"), CFSTR("BKEnableALS"));
@@ -193,6 +198,7 @@
 %new
 - (void)undimDisplay { // undim the display
 
+	// enable auto brightness
 	CFPreferencesSetAppValue(CFSTR("BKEnableALS"), kCFBooleanTrue, CFSTR("com.apple.backboardd"));
 	CFPreferencesAppSynchronize(CFSTR("com.apple.backboardd"));
 	GSSendAppPreferencesChanged(CFSTR("com.apple.backboardd"), CFSTR("BKEnableALS"));
@@ -263,10 +269,11 @@
 
 %hook SBDashBoardIdleTimerProvider
 
-- (id)initWithDelegate:(id)arg1 { // add notification observer
+- (id)initWithDelegate:(id)arg1 { // add a notification observer
 
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateIdleTimer) name:@"dejavuUpdateIdleTimer" object:nil];
+	NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+	[notificationCenter removeObserver:self];
+	[notificationCenter addObserver:self selector:@selector(updateIdleTimer) name:@"dejavuUpdateIdleTimer" object:nil];
 
 	return %orig;
 
@@ -301,7 +308,7 @@
 
 - (BOOL)_shouldAllowControlCenterGesture { // disable control center
 
-	if (isDejaVuActive)
+	if (isDejaVuActive && disableControlCenterSwitch)
 		return NO;
 	else
 		return %orig;
@@ -332,17 +339,14 @@
 
 %end
 
-%end
-
-%group StatusBar
-
 %hook UIStatusBar_Modern
 
-- (void)setFrame:(CGRect)arg1 { // add notification observer
+- (void)setFrame:(CGRect)arg1 { // add a notification observer
 
 	if (hideStatusBarSwitch && !hasAddedStatusBarObserver) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
+		NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
 		hasAddedStatusBarObserver = YES;
 	}
 
@@ -351,33 +355,30 @@
 }
 
 %new
-- (void)setVisibility:(NSNotification *)notification { // hide or unhide status bar
+- (void)setVisibility:(NSNotification *)notification { // hide or unhide the status bar
 
 	if ([notification.name isEqual:@"dejavuHideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[[self statusBar] setAlpha:0.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[[self statusBar] setAlpha:0];
 		} completion:nil];
 	} else if ([notification.name isEqual:@"dejavuUnhideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[[self statusBar] setAlpha:1.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[[self statusBar] setAlpha:1];
 		} completion:nil];
 	}
 
 }
 
 %end
-
-%end
-
-%group FaceIDLock
 
 %hook SBUIProudLockIconView
 
-- (id)initWithFrame:(CGRect)frame { // add notification observer
+- (id)initWithFrame:(CGRect)frame { // add a notification observer
 
 	if (hideFaceIDLockSwitch) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
+		NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
 	}
 
 	return %orig;
@@ -385,38 +386,36 @@
 }
 
 %new
-- (void)setVisibility:(NSNotification *)notification { // hide or unhide faceid lock
+- (void)setVisibility:(NSNotification *)notification { // hide or unhide the faceid lock
 
 	if ([notification.name isEqual:@"dejavuHideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:0.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[[self superview] setAlpha:0];
 		} completion:nil];
 	} else if ([notification.name isEqual:@"dejavuUnhideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:1.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[[self superview] setAlpha:1];
 		} completion:nil];
 	}
 
 }
 
 %end
-
-%end
-
-%group TimeAndDate
 
 %hook SBFLockScreenDateView
 
-- (id)initWithFrame:(CGRect)frame { // add notification observer
+- (id)initWithFrame:(CGRect)frame { // add a notification observer
 
 	if (hideTimeAndDateSwitch) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
+		NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
 	}
 
 	if (pixelShiftSwitch && !hideTimeAndDateSwitch) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(shift) name:@"dejavuPixelShift" object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetShift) name:@"dejavuResetPixelShift" object:nil];
+		NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+		[notificationCenter addObserver:self selector:@selector(shift) name:@"dejavuPixelShift" object:nil];
+		[notificationCenter addObserver:self selector:@selector(resetShift) name:@"dejavuResetPixelShift" object:nil];
 	}
 
 	return %orig;
@@ -424,22 +423,22 @@
 }
 
 %new
-- (void)setVisibility:(NSNotification *)notification { // hide or unhide time and date
+- (void)setVisibility:(NSNotification *)notification { // hide or unhide the time and date
 
 	if ([notification.name isEqual:@"dejavuHideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:0.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[self setAlpha:0];
 		} completion:nil];
 	} else if ([notification.name isEqual:@"dejavuUnhideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:1.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[self setAlpha:1];
 		} completion:nil];
 	}
 
 }
 
 %new
-- (void)shift { // slight movement
+- (void)shift { // pixel shift
 
 	if (!loadedTimeAndDateFrame) originalTimeAndDateFrame = [self frame];
 	loadedTimeAndDateFrame = YES;
@@ -465,17 +464,14 @@
 
 %end
 
-%end
-
-%group MediaPlayer
-
 %hook CSAdjunctItemView
 
-- (id)initWithFrame:(CGRect)frame { // add notification observer
+- (id)initWithFrame:(CGRect)frame { // add a notification observer
 
 	if (hideMediaPlayerSwitch) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
+		NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
 	}
 
 	return %orig;
@@ -483,33 +479,30 @@
 }
 
 %new
-- (void)setVisibility:(NSNotification *)notification { // hide or unhide media player
+- (void)setVisibility:(NSNotification *)notification { // hide or unhide the media player
 
 	if ([notification.name isEqual:@"dejavuHideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:0.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[self setAlpha:0];
 		} completion:nil];
 	} else if ([notification.name isEqual:@"dejavuUnhideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:1.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[self setAlpha:1];
 		} completion:nil];
 	}
 
 }
 
 %end
-
-%end
-
-%group QuickActions
 
 %hook CSQuickActionsButton
 
-- (id)initWithFrame:(CGRect)frame { // add notification observer
+- (id)initWithFrame:(CGRect)frame { // add a notification observer
 
 	if (hideQuickActionsSwitch) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
+		NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
 	}
 
 	return %orig;
@@ -517,33 +510,30 @@
 }
 
 %new
-- (void)setVisibility:(NSNotification *)notification { // hide or unhide quick actions
+- (void)setVisibility:(NSNotification *)notification { // hide or unhide the quick actions
 
 	if ([notification.name isEqual:@"dejavuHideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:0.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[self setAlpha:0];
 		} completion:nil];
 	} else if ([notification.name isEqual:@"dejavuUnhideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:1.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[self setAlpha:1];
 		} completion:nil];
 	}
 
 }
 
 %end
-
-%end
-
-%group UnlockText
 
 %hook CSTeachableMomentsContainerView
 
-- (id)initWithFrame:(CGRect)frame { // add notification observer
+- (id)initWithFrame:(CGRect)frame { // add a notification observer
 
 	if (hideUnlockTextAndHomebarSwitch) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
+		NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
 	}
 
 	return %orig;
@@ -551,15 +541,15 @@
 }
 
 %new
-- (void)setVisibility:(NSNotification *)notification { // hide or unhide unlock label and control center indicator
+- (void)setVisibility:(NSNotification *)notification { // hide or unhide the unlock label and control center indicator
 
 	if ([notification.name isEqual:@"dejavuHideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:0.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[self setAlpha:0];
 		} completion:nil];
 	} else if ([notification.name isEqual:@"dejavuUnhideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:1.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[self setAlpha:1];
 		} completion:nil];
 	}
 
@@ -569,11 +559,12 @@
 
 %hook CSHomeAffordanceView
 
-- (id)initWithFrame:(CGRect)frame { // add notification observer
+- (id)initWithFrame:(CGRect)frame { // add a notification observer
 
 	if (hideUnlockTextAndHomebarSwitch) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
+		NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuHideElements" object:nil];
+		[notificationCenter addObserver:self selector:@selector(setVisibility:) name:@"dejavuUnhideElements" object:nil];
 	}
 
 	return %orig;
@@ -581,15 +572,15 @@
 }
 
 %new
-- (void)setVisibility:(NSNotification *)notification { // hide or unhide homebar
+- (void)setVisibility:(NSNotification *)notification { // hide or unhide the homebar
 
 	if ([notification.name isEqual:@"dejavuHideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:0.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[self setAlpha:0];
 		} completion:nil];
 	} else if ([notification.name isEqual:@"dejavuUnhideElements"]) {
-		[UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
-			[self setAlpha:1.0];
+		[UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+			[self setAlpha:1];
 		} completion:nil];
 	}
 
@@ -621,6 +612,7 @@
 	[preferences registerBool:&pixelShiftSwitch default:YES forKey:@"pixelShift"];
 	[preferences registerBool:&enableLowPowerModeSwitch default:YES forKey:@"enableLowPowerMode"];
 	[preferences registerBool:&enableDoNotDisturbSwitch default:NO forKey:@"enableDoNotDisturb"];
+	[preferences registerBool:&disableControlCenterSwitch default:YES forKey:@"disableControlCenter"];
 
 	// customization
 	[preferences registerBool:&hideStatusBarSwitch default:YES forKey:@"hideStatusBar"];
@@ -631,11 +623,5 @@
 	[preferences registerBool:&hideUnlockTextAndHomebarSwitch default:YES forKey:@"hideUnlockTextAndHomebar"];
 
 	%init(DejaVu);
-	if (hideStatusBarSwitch) %init(StatusBar);
-	if (hideFaceIDLockSwitch) %init(FaceIDLock);
-	%init(TimeAndDate);
-	%init(MediaPlayer);
-	if (hideQuickActionsSwitch) %init(QuickActions);
-	if (hideUnlockTextAndHomebarSwitch) %init(UnlockText);
 
 }

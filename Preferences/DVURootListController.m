@@ -10,15 +10,15 @@
     self.hb_appearanceSettings = [self appearanceSettings];
 
 
-    self.preferences = [[HBPreferences alloc] initWithIdentifier: @"love.litten.dejavupreferences"];
+    self.preferences = [[HBPreferences alloc] initWithIdentifier:@"love.litten.dejavupreferences"];
 
 
     self.enableSwitch = [UISwitch new];
-    [[self enableSwitch] setOnTintColor:[UIColor colorWithRed: 0.47 green: 0.78 blue: 0.79 alpha: 1.00]];
+    [[self enableSwitch] setOnTintColor:[UIColor colorWithRed:0.47 green:0.78 blue:0.79 alpha:1]];
     [[self enableSwitch] addTarget:self action:@selector(setEnabled) forControlEvents:UIControlEventTouchUpInside];
 
 
-    self.item = [[UIBarButtonItem alloc] initWithCustomView: [self enableSwitch]];
+    self.item = [[UIBarButtonItem alloc] initWithCustomView:[self enableSwitch]];
     self.navigationItem.rightBarButtonItem = [self item];
     [[self navigationItem] setRightBarButtonItem:[self item]];
 
@@ -26,7 +26,7 @@
     self.navigationItem.titleView = [UIView new];
     self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
     [[self titleLabel] setFont:[UIFont boldSystemFontOfSize:17]];
-    [[self titleLabel] setText:@"1.2"];
+    [[self titleLabel] setText:@"1.3"];
     [[self titleLabel] setTextColor:[UIColor whiteColor]];
     [[self titleLabel] setTextAlignment:NSTextAlignmentCenter];
     [[[self navigationItem] titleView] addSubview:[self titleLabel]];
@@ -42,8 +42,8 @@
 
     self.iconView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
     [[self iconView] setContentMode:UIViewContentModeScaleAspectFit];
-    [[self iconView] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/DejaVuPrefs.bundle/icon.png"]];
-    [[self iconView] setAlpha:0.0];
+    [[self iconView] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/DejaVuPreferences.bundle/icon.png"]];
+    [[self iconView] setAlpha:0];
     [[[self navigationItem] titleView] addSubview:[self iconView]];
 
     self.iconView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -62,7 +62,7 @@
     self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)];
     self.headerImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)];
     [[self headerImageView] setContentMode:UIViewContentModeScaleAspectFill];
-    [[self headerImageView] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/DejaVuPrefs.bundle/Banner.png"]];
+    [[self headerImageView] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/DejaVuPreferences.bundle/Banner.png"]];
     [[self headerImageView] setClipsToBounds:YES];
     [[self headerView] addSubview:[self headerImageView]];
 
@@ -77,7 +77,7 @@
     if ([[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/DejaVu.disabled"]) {
         [[self enableSwitch] setEnabled:NO];
 
-        UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Déjà Vu" message:@"Déjà Vu has detected that you have disabled it with iCleaner Pro, here are some quick actions you can perform" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"DejaVu" message:@"DejaVu has detected that you have disabled it with iCleaner Pro, here are some quick actions you can perform" preferredStyle:UIAlertControllerStyleAlert];
         
         UIAlertAction* resetAction = [UIAlertAction actionWithTitle:@"Reset preferences" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
             [self resetPreferences];
@@ -96,6 +96,21 @@
         [alertController addAction:ignoreAction];
 
         [self presentViewController:alertController animated:YES completion:nil];
+    } else if ([[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/DayNightSwitch.dylib"]) {
+        UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"DejaVu" message:@"DejaVu has detected that you have DayNightSwitch installed, which causes issues with DejaVu's preferences\n\n To continue, please disable DayNightSwitch with iCleaner Pro or uninstall it temporarily" preferredStyle:UIAlertControllerStyleAlert];
+
+        UIAlertAction* confirmAction = [UIAlertAction actionWithTitle:@"Okey" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
+            [[self navigationController] popViewControllerAnimated:YES];
+        }];
+
+        [alertController addAction:confirmAction];
+
+        [self presentViewController:alertController animated:YES completion:nil];
+    } else {
+        if (![[self preferences] objectForKey:@"wasWelcomed"] || ![[[self preferences] objectForKey:@"wasWelcomed"] isEqual:@(YES)]) {
+            WelcomeViewController* controller = [WelcomeViewController new];
+            [self presentViewController:controller animated:YES completion:nil];
+        }
     }
     
 }
@@ -107,17 +122,17 @@
     CGRect frame = self.table.bounds;
     frame.origin.y = -frame.size.height;
 
-    [[[[self navigationController] navigationController] navigationBar] setBarTintColor:[UIColor colorWithRed: 0.30 green: 0.58 blue: 0.58 alpha: 1.00]];
-    [[[[self navigationController] navigationController] navigationBar] setTintColor:[UIColor blackColor]];
+    [[[[self navigationController] navigationController] navigationBar] setBarTintColor:[UIColor whiteColor]];
+    [[[[self navigationController] navigationController] navigationBar] setTintColor:[UIColor whiteColor]];
     [[[[self navigationController] navigationController] navigationBar] setShadowImage:[UIImage new]];
     [[[[self navigationController] navigationController] navigationBar] setTranslucent:YES];
 
     [[self blurView] setFrame:[[self view] bounds]];
-    [[self blurView] setAlpha:1.0];
+    [[self blurView] setAlpha:1];
     [[self view] addSubview:[self blurView]];
 
-    [UIView animateWithDuration:0.4 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-        [[self blurView] setAlpha:0.0];
+    [UIView animateWithDuration:0.4 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        [[self blurView] setAlpha:0];
     } completion:nil];
 
 }
@@ -152,13 +167,13 @@
 
     if (offsetY > 200)
         [UIView animateWithDuration:0.2 animations:^{
-            [[self iconView] setAlpha:1.0];
-            [[self titleLabel] setAlpha:0.0];
+            [[self iconView] setAlpha:1];
+            [[self titleLabel] setAlpha:0];
         }];
     else
         [UIView animateWithDuration:0.2 animations:^{
-            [[self iconView] setAlpha:0.0];
-            [[self titleLabel] setAlpha:1.0];
+            [[self iconView] setAlpha:0];
+            [[self titleLabel] setAlpha:1];
         }];
 
 }
@@ -185,7 +200,7 @@
 
 - (void)resetPrompt {
 
-    UIAlertController* resetAlert = [UIAlertController alertControllerWithTitle:@"Déjà Vu" message:@"Do you really want to reset your preferences?" preferredStyle:UIAlertControllerStyleActionSheet];
+    UIAlertController* resetAlert = [UIAlertController alertControllerWithTitle:@"DejaVu" message:@"Do you really want to reset your preferences?" preferredStyle:UIAlertControllerStyleActionSheet];
 	
     UIAlertAction* confirmAction = [UIAlertAction actionWithTitle:@"Yaw" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
         [self resetPreferences];
@@ -202,9 +217,11 @@
 
 - (void)resetPreferences {
 
-    [[self preferences] removeAllObjects];
+    for (NSString* key in [[self preferences] dictionaryRepresentation]) {
+        if (![key isEqualToString:@"wasWelcomed"]) [[self preferences] removeObjectForKey:key];
+    }
     
-    [[self enableSwitch] setOn:NO animated: YES];
+    [[self enableSwitch] setOn:NO animated:YES];
     [self respring];
 
 }
@@ -212,11 +229,11 @@
 - (void)respring {
 
     [[self blurView] setFrame:[[self view] bounds]];
-    [[self blurView] setAlpha:0.0];
+    [[self blurView] setAlpha:0];
     [[self view] addSubview:[self blurView]];
 
-    [UIView animateWithDuration:1.0 delay:0.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-        [[self blurView] setAlpha:1.0];
+    [UIView animateWithDuration:1 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        [[self blurView] setAlpha:1];
     } completion:^(BOOL finished) {
         if (![[NSFileManager defaultManager] fileExistsAtPath:@"/Library/MobileSubstrate/DynamicLibraries/shuffle.dylib"])
             [HBRespringController respringAndReturnTo:[NSURL URLWithString:@"prefs:root=Déjà Vu"]];

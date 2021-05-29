@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>DejaVuPrefs</string>
+	<string>DejaVuPreferences</string>
 	<key>CFBundleIdentifier</key>
 	<string>love.litten.dejavupreferences</string>
 	<key>CFBundleInfoDictionaryVersion</key>

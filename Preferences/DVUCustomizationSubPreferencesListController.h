@@ -7,7 +7,7 @@
 @interface DVUAppearanceSettings : HBAppearanceSettings
 @end
 
-@interface DVUBehaviorSubPrefsListController : HBListController
+@interface DVUCustomizationSubPreferencesListController : HBListController
 @property(nonatomic, retain)DVUAppearanceSettings* appearanceSettings;
 @property(nonatomic, retain)UILabel* titleLabel;
 @property(nonatomic, retain)UIBlurEffect* blur;

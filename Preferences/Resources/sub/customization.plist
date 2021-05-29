@@ -22,8 +22,6 @@
 		<string>hideStatusBar</string>
 		<key>label</key>
 		<string>Hide Status Bar</string>
-		<key>PostNotification</key>
-		<string>love.litten.dejavupreferences/ReloadPrefs</string>
 	</dict>
     <dict>
 		<key>cell</key>
@@ -36,8 +34,6 @@
 		<string>hideFaceIDLock</string>
 		<key>label</key>
 		<string>Hide FaceID Lock</string>
-		<key>PostNotification</key>
-		<string>love.litten.dejavupreferences/ReloadPrefs</string>
 	</dict>
 	<dict>
 		<key>cell</key>
@@ -50,8 +46,6 @@
 		<string>hideTimeAndDate</string>
 		<key>label</key>
 		<string>Hide Time and Date</string>
-		<key>PostNotification</key>
-		<string>love.litten.dejavupreferences/ReloadPrefs</string>
 	</dict>
 	<dict>
 		<key>cell</key>
@@ -64,8 +58,6 @@
 		<string>hideMediaPlayer</string>
 		<key>label</key>
 		<string>Hide Media Player</string>
-		<key>PostNotification</key>
-		<string>love.litten.dejavupreferences/ReloadPrefs</string>
 	</dict>
 	<dict>
 		<key>cell</key>
@@ -78,8 +70,6 @@
 		<string>hideQuickActions</string>
 		<key>label</key>
 		<string>Hide Quick Actions</string>
-		<key>PostNotification</key>
-		<string>love.litten.dejavupreferences/ReloadPrefs</string>
 	</dict>
 	<dict>
 		<key>cell</key>
@@ -92,8 +82,6 @@
 		<string>hideUnlockTextAndHomebar</string>
 		<key>label</key>
 		<string>Hide Unlock Text and Homebar</string>
-		<key>PostNotification</key>
-		<string>love.litten.dejavupreferences/ReloadPrefs</string>
 	</dict>
 
 	</array>

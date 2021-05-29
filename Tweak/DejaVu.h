@@ -5,7 +5,6 @@
 extern "C" void GSSendAppPreferencesChanged(CFStringRef bundleID, CFStringRef key);
 
 HBPreferences* preferences = nil;
-
 BOOL enabled = NO;
 
 BOOL isDejaVuActive = NO;
@@ -17,7 +16,7 @@ NSTimer* pixelShiftTimer = nil;
 NSTimer* dimTimer = nil;
 BOOL loadedTimeAndDateFrame = NO;
 CGRect originalTimeAndDateFrame;
-float lastBrightness = nil;
+float lastBrightness = 0;
 BOOL hasAddedStatusBarObserver = NO;
 
 // behavior
@@ -35,6 +34,7 @@ BOOL pixelShiftSwitch = YES;
 BOOL dimDisplaySwitch = YES;
 BOOL enableLowPowerModeSwitch = YES;
 BOOL enableDoNotDisturbSwitch = NO;
+BOOL disableControlCenterSwitch = YES;
 
 // customization
 BOOL hideStatusBarSwitch = YES;
@@ -123,36 +123,8 @@ BOOL hideUnlockTextAndHomebarSwitch = YES;
 - (void)resetShift;
 @end
 
-@interface MRPlatterViewController : UIViewController
-@property(nonatomic, copy)NSString* label;
-- (void)setVisibility:(NSNotification *)notification;
-- (void)setMaterialViewBackground;
-- (void)clearMaterialViewBackground;
-@end
-
-@interface MRUNowPlayingViewController : UIViewController
-@property(assign, nonatomic)long long context;
-- (void)setVisibility:(NSNotification *)notification;
-- (void)setMaterialViewBackground;
-- (void)clearMaterialViewBackground;
-@end
-
 @interface CSAdjunctItemView : UIView
 - (void)setVisibility:(NSNotification *)notification;
-@end
-
-@interface MTMaterialView : UIView
-@end
-
-@interface CABackdropLayer : CALayer
-@property(assign)double scale;
-- (void)mt_setColorMatrixDrivenOpacity:(double)arg1 removingIfIdentity:(BOOL)arg2;
-@end
-
-@interface MTMaterialLayer : CABackdropLayer
-@end
-
-@interface CSNotificationAdjunctListViewController : UIViewController
 @end
 
 @interface UICoverSheetButton : UIControl

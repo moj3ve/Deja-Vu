@@ -32,9 +32,9 @@
  			<key>label</key>
  			<string>Behavior</string>
  			<key>detail</key>
- 			<string>DVUBehaviorSubPrefsListController</string>
+ 			<string>DVUBehaviorSubPreferencesListController</string>
  			<key>DVUSub</key>
- 			<string>behaviorSub</string>
+ 			<string>sub/behavior</string>
  		</dict>
 		<dict>
  			<key>cell</key>
@@ -42,9 +42,9 @@
  			<key>label</key>
  			<string>Customization</string>
  			<key>detail</key>
- 			<string>DVUCustomizationSubPrefsListController</string>
+ 			<string>DVUCustomizationSubPreferencesListController</string>
  			<key>DVUSub</key>
- 			<string>customizationSub</string>
+ 			<string>sub/customization</string>
  		</dict>
 
 		<dict>
@@ -82,9 +82,9 @@
  			<key>label</key>
  			<string>Contributors</string>
  			<key>detail</key>
- 			<string>DVUContributorsSubPrefsListController</string>
+ 			<string>DVUContributorsSubPreferencesListController</string>
  			<key>DVUSub</key>
- 			<string>contributorsSub</string>
+ 			<string>sub/contributors</string>
  		</dict>
 
 		<dict>
@@ -101,7 +101,7 @@
 			<key>subtitle</key>
 			<string>Give your lockscreen clock a new look</string>
 			<key>icon</key>
-			<string>Heartlines.png</string>
+			<string>featured/Heartlines.png</string>
 			<key>url</key>
 			<string>https://repo.litten.love/depictions/hls/</string>
 		</dict>
@@ -113,7 +113,7 @@
 			<key>subtitle</key>
 			<string>Let a moon icon appear when dnd is on</string>
 			<key>icon</key>
-			<string>Lune.png</string>
+			<string>featured/Lune.png</string>
 			<key>url</key>
 			<string>https://repo.litten.love/depictions/lne/</string>
 		</dict>
