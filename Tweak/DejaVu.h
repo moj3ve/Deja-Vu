@@ -9,6 +9,7 @@ BOOL enabled = NO;
 
 BOOL isDejaVuActive = NO;
 int previousLowPowerModeState = 0;
+BOOL wasAutoBrightnessEnabled = YES;
 
 UIView* dejavuView = nil;
 UIImpactFeedbackGenerator* generator = nil;
@@ -18,7 +19,6 @@ NSTimer* dimTimer = nil;
 BOOL loadedTimeAndDateFrame = NO;
 CGRect originalTimeAndDateFrame;
 float lastBrightness = 0;
-BOOL hadAutoBrightness = NO;
 BOOL hasAddedStatusBarObserver = NO;
 
 // behavior

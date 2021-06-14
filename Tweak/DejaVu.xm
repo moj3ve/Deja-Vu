@@ -188,12 +188,11 @@
 %new
 - (void)dimDisplay { // dim the display
 
-	// was auto brightness enabled?
-	Boolean valid = NO;
-	hadAutoBrightness = CFPreferencesGetAppBooleanValue(CFSTR("BKEnableALS"), CFSTR("com.apple.backboardd"), &valid);
+	BOOL valid = NO;
+	wasAutoBrightnessEnabled = CFPreferencesGetAppBooleanValue(CFSTR("BKEnableALS"), CFSTR("com.apple.backboardd"), &valid);
 
 	// disable auto brightness if enabled
-	if(hadAutoBrightness) {
+	if (wasAutoBrightnessEnabled) {
 		CFPreferencesSetAppValue(CFSTR("BKEnableALS"), kCFBooleanFalse, CFSTR("com.apple.backboardd"));
 		CFPreferencesAppSynchronize(CFSTR("com.apple.backboardd"));
 		GSSendAppPreferencesChanged(CFSTR("com.apple.backboardd"), CFSTR("BKEnableALS"));
@@ -207,8 +206,7 @@
 %new
 - (void)undimDisplay { // undim the display
 
-	// enable auto brightness if was enabled before
-	if(hadAutoBrightness) {
+	if (wasAutoBrightnessEnabled) {
 		CFPreferencesSetAppValue(CFSTR("BKEnableALS"), kCFBooleanTrue, CFSTR("com.apple.backboardd"));
 		CFPreferencesAppSynchronize(CFSTR("com.apple.backboardd"));
 		GSSendAppPreferencesChanged(CFSTR("com.apple.backboardd"), CFSTR("BKEnableALS"));
