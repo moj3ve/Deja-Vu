@@ -18,6 +18,7 @@ NSTimer* dimTimer = nil;
 BOOL loadedTimeAndDateFrame = NO;
 CGRect originalTimeAndDateFrame;
 float lastBrightness = 0;
+BOOL hadAutoBrightness = NO;
 BOOL hasAddedStatusBarObserver = NO;
 
 // behavior
