@@ -188,7 +188,7 @@
 %new
 - (void)dimDisplay { // dim the display
 
-	BOOL valid = NO;
+	Boolean valid = NO;
 	wasAutoBrightnessEnabled = CFPreferencesGetAppBooleanValue(CFSTR("BKEnableALS"), CFSTR("com.apple.backboardd"), &valid);
 
 	// disable auto brightness if enabled
