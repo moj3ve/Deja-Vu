@@ -15,6 +15,8 @@ You may not redistribute this source code or packages from it
 You may not use this project to make profit like money
 
 ## Credits
+  - Screen dimming enhancement
+    - [_Callum99](https://twitter.com/_callum99)
   - Icon and Banner
     - [74k1_](https://twitter.com/74k1_)
   - Duo twitter cell
