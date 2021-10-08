@@ -47,7 +47,7 @@
 - (void)lockUIFromSource:(int)arg1 withOptions:(id)arg2 { // set deja vu active when screen turned off
 
 	%orig;
-	
+
 	if (!disableWhileChargingSwitch || (disableWhileChargingSwitch && ![[%c(SBUIController) sharedInstance] isOnAC])) {
 		isDejaVuActive = YES;
 
@@ -70,7 +70,7 @@
 		SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
 		[springboard _simulateHomeButtonPress];
 		NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
-		
+
 		if (disableBiometricsSwitch) {
 			[[%c(SBLockScreenManager) sharedInstance] setBiometricAutoUnlockingDisabled:YES forReason:@"love.litten.dejavu"];
 			[[%c(SBUIBiometricResource) sharedInstance] noteScreenDidTurnOff];
@@ -96,7 +96,7 @@
 		});
 	});
 
-	if (deactivateAfterInactivitySwitch && !inactivityTimer) inactivityTimer = [NSTimer scheduledTimerWithTimeInterval:([inactivityAmountValue intValue] * 60) target:self selector:@selector(deactivateDueToInactivity) userInfo:nil repeats:NO];
+	if (deactivateAfterInactivitySwitch && !inactivityTimer) inactivityTimer = [NSTimer scheduledTimerWithTimeInterval:(inactivityAmountValue * 60) target:self selector:@selector(deactivateDueToInactivity) userInfo:nil repeats:NO];
 	if (pixelShiftSwitch && !pixelShiftTimer) pixelShiftTimer = [NSTimer scheduledTimerWithTimeInterval:180.0 target:self selector:@selector(initiatePixelShift) userInfo:nil repeats:YES];
 	if (dimDisplaySwitch && !dimTimer) dimTimer = [NSTimer scheduledTimerWithTimeInterval:40.0 target:self selector:@selector(dimDisplay) userInfo:nil repeats:NO];
 
@@ -130,17 +130,17 @@
 
 	SpringBoard* springboard = (SpringBoard *)[objc_getClass("SpringBoard") sharedApplication];
 	[[springboard proximitySensorManager] _disableProx];
-	
+
 	[notificationCenter postNotificationName:@"dejavuUpdateIdleTimer" object:nil];
 	[notificationCenter postNotificationName:@"dejavuUnhideElements" object:nil];
 
 	if (enableHapticFeedbackSwitch) {
 		if (!generator) {
-			if ([hapticFeedbackStrengthValue intValue] == 0)
+			if (hapticFeedbackStrengthValue == 0)
 				generator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight];
-			else if ([hapticFeedbackStrengthValue intValue] == 1)
+			else if (hapticFeedbackStrengthValue == 1)
 				generator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleMedium];
-			else if ([hapticFeedbackStrengthValue intValue] == 2)
+			else if (hapticFeedbackStrengthValue == 2)
 				generator = [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleHeavy];
 		}
 
@@ -158,7 +158,7 @@
 		pixelShiftTimer = nil;
 		[notificationCenter postNotificationName:@"dejavuResetShift" object:nil];
 	}
-	
+
 	if (dimDisplaySwitch) {
 		[dimTimer invalidate];
 		dimTimer = nil;
@@ -454,14 +454,14 @@
 
 	int direction = arc4random_uniform(2);
 	CGRect newFrame = originalTimeAndDateFrame;
-	
+
 	if (direction == 0)
 		newFrame.origin.x += arc4random_uniform(15);
 	else if (direction == 1)
 		newFrame.origin.y += arc4random_uniform(15);
 
 	[self setFrame:newFrame];
-	
+
 }
 
 %new
@@ -612,9 +612,9 @@
 	[preferences registerBool:&deactivateWithTapSwitch default:YES forKey:@"deactivateWithTap"];
 	[preferences registerBool:&deactivateWithRaiseToWakeSwitch default:YES forKey:@"deactivateWithRaiseToWake"];
 	[preferences registerBool:&deactivateAfterInactivitySwitch default:YES forKey:@"deactivateAfterInactivity"];
-	[preferences registerObject:&inactivityAmountValue default:@"15" forKey:@"inactivityAmount"];
+	[preferences registerUnsignedInteger:&inactivityAmountValue default:15 forKey:@"inactivityAmount"];
 	[preferences registerBool:&enableHapticFeedbackSwitch default:NO forKey:@"enableHapticFeedback"];
-	[preferences registerObject:&hapticFeedbackStrengthValue default:@"0" forKey:@"hapticFeedbackStrength"];
+	[preferences registerUnsignedInteger:&hapticFeedbackStrengthValue default:0 forKey:@"hapticFeedbackStrength"];
 	[preferences registerBool:&disableBiometricsSwitch default:YES forKey:@"disableBiometrics"];
 	[preferences registerBool:&pocketDetectionSwitch default:YES forKey:@"pocketDetection"];
 	[preferences registerBool:&dimDisplaySwitch default:YES forKey:@"dimDisplay"];

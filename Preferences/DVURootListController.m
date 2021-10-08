@@ -42,7 +42,7 @@
 
     self.iconView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
     [[self iconView] setContentMode:UIViewContentModeScaleAspectFit];
-    [[self iconView] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/DejaVuPreferences.bundle/icon.png"]];
+    [[self iconView] setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/DejaVuPreferences.bundle/Icon.png"]];
     [[self iconView] setAlpha:0];
     [[[self navigationItem] titleView] addSubview:[self iconView]];
 
@@ -78,7 +78,7 @@
         [[self enableSwitch] setEnabled:NO];
 
         UIAlertController* alertController = [UIAlertController alertControllerWithTitle:@"Déjà Vu" message:@"Déjà Vu has detected that you have disabled it with iCleaner Pro, here are some quick actions you can perform" preferredStyle:UIAlertControllerStyleAlert];
-        
+
         UIAlertAction* resetAction = [UIAlertAction actionWithTitle:@"Reset preferences" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
             [self resetPreferences];
         }];
@@ -113,7 +113,7 @@
             [[self preferences] setBool:YES forKey:@"wasWelcomed"];
         }
     }
-    
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -151,7 +151,7 @@
 	if (_specifiers == nil) _specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
 
 	return _specifiers;
-    
+
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -180,7 +180,7 @@
 }
 
 - (void)setEnabled {
-        
+
     if ([[[self preferences] objectForKey:@"Enabled"] isEqual:@(YES)])
         [[self preferences] setBool:NO forKey:@"Enabled"];
     else
@@ -202,7 +202,7 @@
 - (void)resetPrompt {
 
     UIAlertController* resetAlert = [UIAlertController alertControllerWithTitle:@"Déjà Vu" message:@"Do you really want to reset your preferences?" preferredStyle:UIAlertControllerStyleActionSheet];
-	
+
     UIAlertAction* confirmAction = [UIAlertAction actionWithTitle:@"Yaw" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * action) {
         [self resetPreferences];
 	}];
@@ -221,7 +221,7 @@
     for (NSString* key in [[self preferences] dictionaryRepresentation]) {
         if (![key isEqualToString:@"wasWelcomed"]) [[self preferences] removeObjectForKey:key];
     }
-    
+
     [[self enableSwitch] setOn:NO animated:YES];
     [self respring];
 

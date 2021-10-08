@@ -4,7 +4,7 @@
 <dict>
 	<key>items</key>
 	<array>
-	
+
 		<dict>
 			<key>cellClass</key>
 			<string>DuoTwitterCell</string>
@@ -34,7 +34,7 @@
  			<key>detail</key>
  			<string>DVUBehaviorSubPreferencesListController</string>
  			<key>DVUSub</key>
- 			<string>sub/behavior</string>
+ 			<string>Sub/Behavior</string>
  		</dict>
 		<dict>
  			<key>cell</key>
@@ -44,14 +44,14 @@
  			<key>detail</key>
  			<string>DVUCustomizationSubPreferencesListController</string>
  			<key>DVUSub</key>
- 			<string>sub/customization</string>
+ 			<string>Sub/Customization</string>
  		</dict>
 
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Other options</string>
+			<string>Other Options</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -65,7 +65,7 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-			<string>Reset preferences</string>
+			<string>Reset Preferences</string>
 			<key>action</key>
 			<string>resetPrompt</string>
 		</dict>
@@ -84,7 +84,7 @@
  			<key>detail</key>
  			<string>DVUContributorsSubPreferencesListController</string>
  			<key>DVUSub</key>
- 			<string>sub/contributors</string>
+ 			<string>Sub/contributors</string>
  		</dict>
 
 		<dict>
@@ -99,9 +99,9 @@
 			<key>label</key>
 			<string>Heartlines</string>
 			<key>subtitle</key>
-			<string>Give your lockscreen clock a new look</string>
+			<string>Give your lock screen clock a new look</string>
 			<key>icon</key>
-			<string>featured/Heartlines.png</string>
+			<string>Featured/Heartlines.png</string>
 			<key>url</key>
 			<string>https://repo.litten.love/depictions/Heartlines/</string>
 		</dict>
@@ -113,7 +113,7 @@
 			<key>subtitle</key>
 			<string>Let a moon icon appear when dnd is on</string>
 			<key>icon</key>
-			<string>featured/Lune.png</string>
+			<string>Featured/Lune.png</string>
 			<key>url</key>
 			<string>https://repo.litten.love/depictions/Lune/</string>
 		</dict>
